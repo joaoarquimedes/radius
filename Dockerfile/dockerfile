@@ -1,0 +1,42 @@
+ARG ARCH
+ARG DOCKER_IMAGE
+FROM --platform=${ARCH} ${DOCKER_IMAGE}
+LABEL description="LPIC-3 Security"
+
+RUN apt clean && apt autoclean -y
+RUN apt update -y && apt upgrade -y
+
+# Install freeradius
+RUN apt install -y curl iproute2 procps
+RUN apt install -y build-essential
+# https://www.freeradius.org/ftp/pub/freeradius/freeradius-server-3.2.8.tar.gz
+
+WORKDIR /url/local/src
+ARG FREERADIUS_VERSION
+RUN curl -O https://www.freeradius.org/ftp/pub/freeradius/freeradius-server-${FREERADIUS_VERSION}.tar.gz
+RUN tar -xzf freeradius-server-${FREERADIUS_VERSION}.tar.gz
+WORKDIR /url/local/src/freeradius-server-${FREERADIUS_VERSION}
+
+RUN apt install -y libtalloc-dev libssh-dev
+RUN ./configure --prefix=/usr/local/freeradius-${FREERADIUS_VERSION}
+RUN make -j $(nproc)
+RUN make install
+RUN ln -s /usr/local/freeradius-${FREERADIUS_VERSION} /usr/local/freeradius
+
+ENV PATH="/usr/local/freeradius/sbin:/usr/local/freeradius/bin:${PATH}"
+WORKDIR /usr/local/freeradius
+
+RUN rm -rf /usr/local/src/freeradius-server-${FREERADIUS_VERSION}*
+RUN apt remove -y build-essential
+RUN apt autoremove -y
+RUN apt clean && apt autoclean -y
+
+ARG TZ
+ENV TZ=${TZ}
+RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime
+RUN echo ${TZ} > /etc/timezone
+
+COPY --chown=root:root --chmod=644 ./bashrc /root/.bashrc
+
+EXPOSE 1812/udp 1813/udp
+CMD ["radiusd", "-fl", "stdout"]

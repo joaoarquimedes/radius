@@ -1,0 +1,20 @@
+networks:
+  internal:
+    driver: bridge
+
+services:
+  server:
+    build:
+      args:
+        ARCH: ${ARCH}
+        TZ: ${TZ}
+        DOCKER_IMAGE: ${DOCKER_IMAGE}
+        FREERADIUS_VERSION: ${FREERADIUS_VERSION}
+      context: Dockerfile
+      dockerfile: dockerfile
+    image: local/freeradius:${FREERADIUS_VERSION}
+    networks:
+      - internal
+    ports:
+      - "1812:1812/udp"
+      - "1813:1813/udp"
