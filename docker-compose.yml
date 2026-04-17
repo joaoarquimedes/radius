@@ -13,6 +13,9 @@ services:
       context: Dockerfile
       dockerfile: dockerfile
     image: local/freeradius:${FREERADIUS_VERSION}
+    volumes:
+      - ./config/mods-config/files/authorize:/usr/local/freeradius/etc/raddb/mods-config/files/authorize:ro
+      - ./config/mods-available/eap:/usr/local/freeradius/etc/raddb/mods-available/eap:ro
     networks:
       - internal
     ports:

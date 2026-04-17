@@ -23,12 +23,9 @@ RUN make -j $(nproc)
 RUN make install
 RUN ln -s /usr/local/freeradius-${FREERADIUS_VERSION} /usr/local/freeradius
 
-ENV PATH="/usr/local/freeradius/sbin:/usr/local/freeradius/bin:${PATH}"
-WORKDIR /usr/local/freeradius
-
 RUN rm -rf /usr/local/src/freeradius-server-${FREERADIUS_VERSION}*
-RUN apt remove -y build-essential
-RUN apt autoremove -y
+RUN apt remove --purge -y build-essential
+RUN apt autoremove --purge -y
 RUN apt clean && apt autoclean -y
 
 ARG TZ
@@ -38,5 +35,12 @@ RUN echo ${TZ} > /etc/timezone
 
 COPY --chown=root:root --chmod=644 ./bashrc /root/.bashrc
 
+ENV PATH="/usr/local/freeradius/sbin:/usr/local/freeradius/bin:${PATH}"
+WORKDIR /usr/local/freeradius/etc/raddb
+
 EXPOSE 1812/udp 1813/udp
-CMD ["radiusd", "-fl", "stdout"]
+
+# Inicialização com saída de log no stdout
+# CMD ["radiusd", "-fl", "stdout"]
+# Inicialização modo debug. Somente para validação, usa-se os parâmetros -XC
+CMD ["radiusd", "-X"]
