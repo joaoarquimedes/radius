@@ -17,6 +17,8 @@ services:
       - ./config/clients.conf:/usr/local/freeradius/etc/raddb/clients.conf:ro
       - ./config/mods-config/files/authorize:/usr/local/freeradius/etc/raddb/mods-config/files/authorize:ro
       - ./config/mods-available/eap:/usr/local/freeradius/etc/raddb/mods-available/eap:ro
+      - ./config/sites-available/default:/usr/local/freeradius/etc/raddb/sites-available/default:ro
+      - ./config/sites-available/inner-tunnel:/usr/local/freeradius/etc/raddb/sites-available/inner-tunnel:ro
       - ./config/test/eap.conf:/app/eap.conf:ro
     networks:
       internal:
