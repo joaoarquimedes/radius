@@ -7,7 +7,7 @@ RUN apt clean && apt autoclean -y
 RUN apt update -y && apt upgrade -y
 
 # Install freeradius
-RUN apt install -y curl iproute2 procps
+RUN apt install -y curl iproute2 procps eapoltest
 RUN apt install -y build-essential
 # https://www.freeradius.org/ftp/pub/freeradius/freeradius-server-3.2.8.tar.gz
 
@@ -41,6 +41,6 @@ WORKDIR /usr/local/freeradius/etc/raddb
 EXPOSE 1812/udp 1813/udp
 
 # Inicialização com saída de log no stdout
-# CMD ["radiusd", "-fl", "stdout"]
+CMD ["radiusd", "-fl", "stdout"]
 # Inicialização modo debug. Somente para validação, usa-se os parâmetros -XC
-CMD ["radiusd", "-X"]
+# CMD ["radiusd", "-X"]

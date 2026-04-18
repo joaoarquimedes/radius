@@ -11,13 +11,15 @@ services:
         DOCKER_IMAGE: ${DOCKER_IMAGE}
         FREERADIUS_VERSION: ${FREERADIUS_VERSION}
       context: Dockerfile
-      dockerfile: dockerfile
+      dockerfile: server.dockerfile
     image: local/freeradius:${FREERADIUS_VERSION}
     volumes:
+      - ./config/clients.conf:/usr/local/freeradius/etc/raddb/clients.conf:ro
       - ./config/mods-config/files/authorize:/usr/local/freeradius/etc/raddb/mods-config/files/authorize:ro
       - ./config/mods-available/eap:/usr/local/freeradius/etc/raddb/mods-available/eap:ro
+      - ./config/test/eap.conf:/app/eap.conf:ro
     networks:
-      - internal
+      internal:
     ports:
       - "1812:1812/udp"
       - "1813:1813/udp"
