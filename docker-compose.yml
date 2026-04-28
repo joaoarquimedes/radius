@@ -10,10 +10,13 @@ services:
         TZ: ${TZ}
         DOCKER_IMAGE: ${DOCKER_IMAGE}
         FREERADIUS_VERSION: ${FREERADIUS_VERSION}
+        USER_NAME: ${USER_NAME}
+        GROUP_NAME: ${GROUP_NAME}
       context: Dockerfile
       dockerfile: server.dockerfile
     image: local/freeradius:${FREERADIUS_VERSION}
     volumes:
+      - ./config/radiusd.conf:/usr/local/freeradius/etc/raddb/radiusd.conf:ro
       - ./config/clients.conf:/usr/local/freeradius/etc/raddb/clients.conf:ro
       - ./config/mods-config/files/authorize:/usr/local/freeradius/etc/raddb/mods-config/files/authorize:ro
       - ./config/mods-available/eap:/usr/local/freeradius/etc/raddb/mods-available/eap:ro
